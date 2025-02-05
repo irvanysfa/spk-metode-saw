@@ -38,10 +38,14 @@ main {
     margin-right: 20px;
 }
 
-/* Tombol logout */
-.btn-danger {
-    padding: 5px 15px;
-    border-radius: 5px;
+.btn-logout {
+    background-color: #0d6efd; /* Warna biru */
+    color: white; /* Warna teks putih */
+    border: none;
+}
+
+.btn-logout:hover {
+    background-color: red; /* Warna merah saat hover */
 }
 
 .logo-header {

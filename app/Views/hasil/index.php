@@ -1,5 +1,6 @@
 <?= $this->extend('layout/main'); ?>
 <?= $this->section('content'); ?>
+
 <div class="container-utama">
     <h2>Hasil Perankingan</h2>
 
@@ -36,12 +37,45 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
-    <?php endif; ?>
-    <!-- Tombol Cetak PDF -->
-    <?php if (!empty($hasil)) : ?>
-        <a href="<?= base_url('hasil/print_pdf?kelas=' . $_GET['kelas']); ?>" target="_blank">
+
+        <!-- Tombol Hapus Data -->
+        <form id="deleteForm" method="post" action="<?= base_url('hasil/deleteByKelas'); ?>">
+            <input type="hidden" name="kelas" value="<?= $kelasTerpilih; ?>">
+            <button type="button" class="btn btn-danger mt-2" onclick="confirmDelete()">Hapus Data</button>
+        </form>
+
+        <!-- Tombol Cetak PDF -->
+        <a href="<?= base_url('hasil/print_pdf?kelas=' . $kelasTerpilih); ?>" target="_blank">
             <button class="btn btn-success mt-2">Cetak PDF</button>
         </a>
     <?php endif; ?>
 </div>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete() {
+        Swal.fire({
+            title: "Apakah Anda yakin?",
+            text: "Data hasil perhitungan untuk kelas ini akan dihapus!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Ya, hapus!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("deleteForm").submit();
+            }
+        });
+    }
+
+    // Tampilkan notifikasi sukses atau error
+    <?php if (session()->getFlashdata('success')) : ?>
+        Swal.fire("Berhasil!", "<?= session()->getFlashdata('success'); ?>", "success");
+    <?php elseif (session()->getFlashdata('error')) : ?>
+        Swal.fire("Gagal!", "<?= session()->getFlashdata('error'); ?>", "error");
+    <?php endif; ?>
+</script>
+
 <?= $this->endSection(); ?>

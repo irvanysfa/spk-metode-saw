@@ -5,8 +5,7 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::index');
-$routes->get('/testdatabase', 'TestDatabase::index');
+$routes->get('/', 'Auth::login');
 $routes->get('/register', 'Auth::register');
 $routes->post('/register/process', 'Auth::processRegister');
 
@@ -41,6 +40,8 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 
     $routes->get('/hasil', 'HasilController::index');
     $routes->get('/hasil/print_pdf', 'HasilController::print_pdf');
+    $routes->post('hasil/deleteByKelas', 'HasilController::deleteByKelas');
+
 });
 
 $routes->get('/logout', 'Auth::logout');

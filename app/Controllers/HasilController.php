@@ -42,5 +42,20 @@ class HasilController extends Controller
     
         generate_pdf($html, 'hasil_perangkingan_' . $kelasTerpilih . '.pdf');
     }
+
+    public function deleteByKelas()
+    {
+        $hasilModel = new HasilModel();
+        $kelasTerpilih = $this->request->getPost('kelas');
+    
+        if ($kelasTerpilih) {
+            $hasilModel->where('kelas', $kelasTerpilih)->delete();
+            return redirect()->to('/hasil')->with('success', 'Data hasil perhitungan berhasil dihapus!');
+        } else {
+            return redirect()->to('/hasil')->with('error', 'Pilih kelas terlebih dahulu untuk menghapus data.');
+        }
+    }
+    
+
     
 }

@@ -14,23 +14,23 @@ class SiswaController extends Controller
         $siswaModel = new SiswaModel();
         $kriteriaModel = new KriteriaModel();
         $nilaiModel = new NilaiModel();
-    
+
         $kelas = $this->request->getGet('kelas'); // Ambil kelas dari parameter GET
         if ($kelas && in_array($kelas, ['1', '2', '3', '4', '5', '6'])) {
             $data['siswa'] = $siswaModel->getSiswaByKelas($kelas);
         } else {
             $data['siswa'] = $siswaModel->findAll(); // Jika tidak ada filter kelas, tampilkan semua
         }
-    
+
         $data['kriteria'] = $kriteriaModel->findAll();
-    
+
         foreach ($data['siswa'] as &$siswa) {
             $siswa['nilai'] = $nilaiModel->where('id_siswa', $siswa['id_siswa'])->findAll();
         }
-    
+
         return view('siswa/index', $data);
     }
-    
+
 
     public function create()
     {
@@ -48,7 +48,7 @@ class SiswaController extends Controller
         $model->insert($data);
         return redirect()->to('/siswa')->with('success', 'Data siswa berhasil ditambahkan!');
     }
-    
+
 
     public function edit($id)
     {
@@ -68,14 +68,27 @@ class SiswaController extends Controller
         $model->update($id, $data);
         return redirect()->to('/siswa')->with('success', 'Data siswa berhasil diperbarui!');
     }
-    
+
 
     public function delete($id)
     {
         $model = new SiswaModel();
+        $hasilModel = new \App\Models\HasilModel(); // Gunakan model hasil
+
+        // Cek apakah siswa masih ada di tabel hasil
+        $cekHasil = $hasilModel->where('id_siswa', $id)->countAllResults();
+
+        if ($cekHasil > 0) {
+            session()->setFlashdata('error', 'Siswa tidak dapat dihapus karena masih terdaftar dalam hasil perhitungan. Mohon hapus data siswa dari hasil perhitungan terlebih dahulu');
+            return redirect()->to('/siswa');
+        }
+
+        // Jika tidak ada di tabel hasil, lanjutkan proses hapus
         $model->delete($id);
-        return redirect()->to('/siswa')->with('success', 'Data siswa berhasil dihapus!');
+        session()->setFlashdata('success', 'Data siswa berhasil dihapus!');
+        return redirect()->to('/siswa');
     }
+
 
     // ✨ Fungsi Baru: Edit Nilai Siswa
     public function editNilai($id_siswa)
@@ -103,8 +116,8 @@ class SiswaController extends Controller
 
         foreach ($id_kriteria as $index => $kriteria) {
             $existing = $nilaiModel->where('id_siswa', $id_siswa)
-                                   ->where('id_kriteria', $kriteria)
-                                   ->first();
+                ->where('id_kriteria', $kriteria)
+                ->first();
 
             if ($existing) {
                 $nilaiModel->update($existing['id_nilai'], ['nilai' => $nilai[$index]]);

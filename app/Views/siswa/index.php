@@ -6,7 +6,7 @@
 
     <a href="<?= base_url('/siswa/create') ?>" class="btn btn-primary">Tambah Siswa</a>
     <form method="get" action="<?= base_url('/siswa') ?>">
-        <label for="kelas">Pilih Kelas:</label>
+        <label for="kelas" class="label-lb">Pilih Kelas:</label>
         <select name="kelas" id="kelas" class="form-control" onchange="this.form.submit()">
             <option value="">Semua Kelas</option>
             <option value="1" <?= (isset($_GET['kelas']) && $_GET['kelas'] == '1') ? 'selected' : '' ?>>Kelas 1</option>
@@ -61,4 +61,31 @@
         </tbody>
     </table>
 </div>
+
+<!-- Tambahkan library SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    <?php if (session()->getFlashdata('error')): ?>
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: "<?= session()->getFlashdata('error'); ?>",
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'OK'
+        });
+    <?php endif; ?>
+
+    <?php if (session()->getFlashdata('success')): ?>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "<?= session()->getFlashdata('success'); ?>",
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    <?php endif; ?>
+</script>
+
+
 <?= $this->endSection() ?>

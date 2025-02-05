@@ -9,9 +9,21 @@
         <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
     <?php endif; ?>
 
-
     <h2>Data Nilai</h2>
     <a href="<?= base_url('/nilai/create') ?>" class="btn btn-primary">Tambah Nilai</a>
+
+    <!-- Form untuk memilih kriteria -->
+    <form method="get" action="<?= base_url('/nilai') ?>" class="mt-3">
+        <label for="kriteria" class="label-lb">Pilih Kriteria:</label>
+        <select name="kriteria" id="kriteria" class="form-control" onchange="this.form.submit()">
+            <option value="">Semua Kriteria</option>
+            <?php foreach ($kriteria as $k): ?>
+                <option value="<?= $k['id_kriteria'] ?>" <?= ($selected_kriteria == $k['id_kriteria']) ? 'selected' : '' ?>>
+                    <?= $k['nama_kriteria'] ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </form>
 
     <table class="table mt-3">
         <thead>

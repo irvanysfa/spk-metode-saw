@@ -51,4 +51,14 @@ class NilaiModel extends Model
             ->orderBy('nilai.id_siswa, nilai.id_kriteria')
             ->findAll();
     }
+
+    public function getNilaiByKriteria($id_kriteria)
+    {
+        return $this->select('nilai.*, siswa.nama_siswa, kriteria.nama_kriteria')
+            ->join('siswa', 'siswa.id_siswa = nilai.id_siswa')
+            ->join('kriteria', 'kriteria.id_kriteria = nilai.id_kriteria')
+            ->where('nilai.id_kriteria', $id_kriteria)
+            ->findAll();
+    }
+    
 }

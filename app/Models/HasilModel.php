@@ -25,4 +25,8 @@ class HasilModel extends Model
     {
         return $this->db->table('hasil')->distinct()->select('kelas')->get()->getResultArray();
     }
+    public function deleteHasilByKelas($kelas)
+    {
+        return $this->where('kelas', $kelas)->delete();
+    }
 }

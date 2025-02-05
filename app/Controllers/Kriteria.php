@@ -34,8 +34,6 @@ class Kriteria extends Controller
 
         return redirect()->to('/kriteria')->with('success', 'Kriteria berhasil ditambahkan.');
     }
-
-    // Fungsi baru untuk menampilkan form edit
     public function edit($id)
     {
         $model = new KriteriaModel();
@@ -68,6 +66,7 @@ class Kriteria extends Controller
     {
         $model = new KriteriaModel();
         $model->delete($id);
+
         return redirect()->to('/kriteria')->with('success', 'Kriteria berhasil dihapus.');
     }
 }

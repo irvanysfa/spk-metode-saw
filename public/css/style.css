@@ -49,3 +49,11 @@ footer {
     font-size: 1.1rem;
     color: #333;
 }
+
+.label-lb{
+    font-family: "Poppins", serif;
+    font-weight: 500;
+    font-style: normal;
+    margin:15px;
+}
+
