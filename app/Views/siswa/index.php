@@ -3,28 +3,42 @@
 
 <div class="container-utama">
     <h2>Data Siswa</h2>
-
     <a href="<?= base_url('/siswa/create') ?>" class="btn btn-primary">Tambah Siswa</a>
-    <form method="get" action="<?= base_url('/siswa') ?>">
-        <label for="kelas" class="label-lb">Pilih Kelas:</label>
-        <select name="kelas" id="kelas" class="form-control" onchange="this.form.submit()">
-            <option value="">Semua Kelas</option>
-            <option value="1" <?= (isset($_GET['kelas']) && $_GET['kelas'] == '1') ? 'selected' : '' ?>>Kelas 1</option>
-            <option value="2" <?= (isset($_GET['kelas']) && $_GET['kelas'] == '2') ? 'selected' : '' ?>>Kelas 2</option>
-            <option value="3" <?= (isset($_GET['kelas']) && $_GET['kelas'] == '3') ? 'selected' : '' ?>>Kelas 3</option>
-            <option value="4" <?= (isset($_GET['kelas']) && $_GET['kelas'] == '4') ? 'selected' : '' ?>>Kelas 4</option>
-            <option value="5" <?= (isset($_GET['kelas']) && $_GET['kelas'] == '5') ? 'selected' : '' ?>>Kelas 5</option>
-            <option value="6" <?= (isset($_GET['kelas']) && $_GET['kelas'] == '6') ? 'selected' : '' ?>>Kelas 6</option>
-        </select>
+    <form method="get" action="<?= base_url('/siswa') ?>" class="row row-cols-lg-auto g-3 align-items-center mt-3">
+        <div class="col-12">
+            <label for="kelas" class="form-label">Pilih Kelas:</label>
+            <select name="kelas" id="kelas" class="form-control" onchange="this.form.submit()">
+                <option value="">Semua Kelas</option>
+                <?php
+                $kelasList = ['IX A', 'IX B', 'IX C', 'IX D', 'IX E', 'IX F', 'IX G', 'IX H'];
+                foreach ($kelasList as $kls): ?>
+                    <option value="<?= $kls ?>" <?= (isset($_GET['kelas']) && $_GET['kelas'] == $kls) ? 'selected' : '' ?>><?= $kls ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="col-12">
+            <label for="angkatan" class="form-label">Tahun Angkatan:</label>
+            <select name="angkatan" id="angkatan" class="form-control" onchange="this.form.submit()">
+                <option value="">Semua Angkatan</option>
+                <?php foreach ($angkatanList as $a): ?>
+                    <option value="<?= $a['tahun_angkatan'] ?>" <?= (isset($_GET['angkatan']) && $_GET['angkatan'] == $a['tahun_angkatan']) ? 'selected' : '' ?>>
+                        <?= $a['tahun_angkatan'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
     </form>
+
 
     <table class="table mt-3">
         <thead>
             <tr>
                 <th>No</th>
-                <th>Nomor Absen</th>
+                <th>Kode Alternatif</th>
                 <th>Nama</th>
                 <th>Kelas</th>
+                <th>Tahun Angkatan</th>
                 <th>Nilai</th>
                 <th>Aksi</th>
             </tr>
@@ -34,9 +48,10 @@
             foreach ($siswa as $s): ?>
                 <tr>
                     <td><?= $no++ ?></td>
-                    <td><?= $s['nomor_absen'] ?></td>
+                    <td><?= $s['kode_alternatif'] ?></td>
                     <td><?= $s['nama_siswa'] ?></td>
                     <td><?= $s['kelas'] ?></td>
+                    <td><?= $s['tahun_angkatan'] ?></td>
                     <td>
                         <?php foreach ($kriteria as $k): ?>
                             <?php
@@ -86,6 +101,5 @@
         });
     <?php endif; ?>
 </script>
-
 
 <?= $this->endSection() ?>

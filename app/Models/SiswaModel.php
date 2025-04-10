@@ -8,7 +8,9 @@ class SiswaModel extends Model
 {
     protected $table = 'siswa';
     protected $primaryKey = 'id_siswa';
-    protected $allowedFields = ['nomor_absen', 'nama_siswa', 'kelas']; // Tambahkan nomor_absen
+    protected $allowedFields = ['nomor_absen','kode_alternatif', 'nama_siswa', 'kelas', 'tahun_angkatan'];
+
+
     
     public function getAllSiswa()
     {
@@ -37,7 +39,7 @@ class SiswaModel extends Model
             if (!isset($data[$id_siswa])) {
                 $data[$id_siswa] = [
                     'id_siswa' => $row['id_siswa'],
-                    'nomor_absen' => $row['nomor_absen'],
+                    'kode_alternatif' => $row['kode_alternatif'],
                     'nama_siswa' => $row['nama_siswa'],
                     'kelas' => $row['kelas'],
                     'nilai' => []

@@ -116,7 +116,7 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Ranking</th>
+                        <th>No</th>
                         <th>Nama Siswa</th>
                         <th>Total Nilai</th>
                     </tr>

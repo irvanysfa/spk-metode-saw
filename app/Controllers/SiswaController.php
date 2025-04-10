@@ -15,21 +15,41 @@ class SiswaController extends Controller
         $kriteriaModel = new KriteriaModel();
         $nilaiModel = new NilaiModel();
 
-        $kelas = $this->request->getGet('kelas'); // Ambil kelas dari parameter GET
-        if ($kelas && in_array($kelas, ['1', '2', '3', '4', '5', '6'])) {
-            $data['siswa'] = $siswaModel->getSiswaByKelas($kelas);
-        } else {
-            $data['siswa'] = $siswaModel->findAll(); // Jika tidak ada filter kelas, tampilkan semua
+        $kelas = $this->request->getGet('kelas');
+        $angkatan = $this->request->getGet('angkatan');
+
+        $query = $siswaModel;
+
+        // Tambahkan filter jika kelas dipilih
+        if (!empty($kelas)) {
+            $query = $query->where('kelas', $kelas);
         }
 
-        $data['kriteria'] = $kriteriaModel->findAll();
-
-        foreach ($data['siswa'] as &$siswa) {
-            $siswa['nilai'] = $nilaiModel->where('id_siswa', $siswa['id_siswa'])->findAll();
+        // Tambahkan filter jika angkatan dipilih
+        if (!empty($angkatan)) {
+            $query = $query->where('tahun_angkatan', $angkatan);
         }
 
-        return view('siswa/index', $data);
+        $siswa = $query->findAll();
+
+        // Ambil semua kriteria
+        $kriteria = $kriteriaModel->findAll();
+
+        // Ambil nilai tiap siswa
+        foreach ($siswa as &$s) {
+            $s['nilai'] = $nilaiModel->where('id_siswa', $s['id_siswa'])->findAll();
+        }
+
+        // Ambil daftar tahun angkatan unik dari database
+        $angkatanList = $siswaModel->select('tahun_angkatan')->distinct()->findAll();
+
+        return view('siswa/index', [
+            'siswa' => $siswa,
+            'kriteria' => $kriteria,
+            'angkatanList' => $angkatanList, // untuk filter
+        ]);
     }
+
 
 
     public function create()
@@ -41,9 +61,10 @@ class SiswaController extends Controller
     {
         $model = new SiswaModel();
         $data = [
-            'nomor_absen' => $this->request->getPost('nomor_absen'),
+            'kode_alternatif' => $this->request->getPost('kode_alternatif'),
             'nama_siswa'  => $this->request->getPost('nama_siswa'),
-            'kelas'       => $this->request->getPost('kelas')
+            'kelas'       => $this->request->getPost('kelas'),
+            'tahun_angkatan'  => $this->request->getPost('tahun_angkatan')
         ];
         $model->insert($data);
         return redirect()->to('/siswa')->with('success', 'Data siswa berhasil ditambahkan!');
@@ -61,9 +82,10 @@ class SiswaController extends Controller
     {
         $model = new SiswaModel();
         $data = [
-            'nomor_absen' => $this->request->getPost('nomor_absen'),
+            'kode_alternatif' => $this->request->getPost('kode_alternatif'),
             'nama_siswa'  => $this->request->getPost('nama_siswa'),
-            'kelas'       => $this->request->getPost('kelas')
+            'kelas'       => $this->request->getPost('kelas'),
+            'tahun_angkatan'  => $this->request->getPost('tahun_angkatan')
         ];
         $model->update($id, $data);
         return redirect()->to('/siswa')->with('success', 'Data siswa berhasil diperbarui!');

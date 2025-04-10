@@ -61,3 +61,17 @@ nav {
     position: fixed;
     z-index: 1000;
 }
+
+/* Hilangkan background dan border-radius dari link aktif */
+.nav-pills .nav-link.active {
+    background-color: transparent !important;
+    color: #0d6efd !important; /* Ganti dengan warna teks yang kamu inginkan */
+    font-weight: bold; /* Opsional, biar lebih menonjol */
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Hover dan focus tetap pakai efek */
+.nav-pills .nav-link:hover {
+    text-decoration: underline;
+}

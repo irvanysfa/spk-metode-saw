@@ -11,28 +11,30 @@ class Nilai extends Controller
 {
     public function index()
     {
-        $nilaiModel = new NilaiModel();
-        $kriteriaModel = new KriteriaModel();
-    
-        // Ambil parameter kriteria dari GET request
+        $nilaiModel = new \App\Models\NilaiModel();
+        $kriteriaModel = new \App\Models\KriteriaModel();
+        $siswaModel = new \App\Models\SiswaModel();
+
+        // Ambil input filter
         $id_kriteria = $this->request->getGet('kriteria');
-    
-        // Ambil daftar semua kriteria untuk dropdown
-        $kriteriaList = $kriteriaModel->findAll();
-    
-        // Ambil data nilai berdasarkan kriteria (jika ada filter)
-        if ($id_kriteria) {
-            $data['nilai'] = $nilaiModel->getNilaiByKriteria($id_kriteria);
-        } else {
-            $data['nilai'] = $nilaiModel->getAllNilai();
-        }
-    
-        $data['kriteria'] = $kriteriaList;
-        $data['selected_kriteria'] = $id_kriteria; // Menyimpan pilihan kriteria saat ini di dropdown
-    
+        $nama_siswa = $this->request->getGet('search');
+        $kelas = $this->request->getGet('kelas');
+        $angkatan = $this->request->getGet('angkatan');
+
+        $data['nilai'] = $nilaiModel->getFilteredNilaiFull($id_kriteria, $nama_siswa, $kelas, $angkatan);
+
+        $data['kriteria'] = $kriteriaModel->findAll();
+        $data['selected_kriteria'] = $id_kriteria;
+        $data['search'] = $nama_siswa;
+        $data['selected_kelas'] = $kelas;
+        $data['selected_angkatan'] = $angkatan;
+
+        // Ambil kelas unik dan angkatan unik dari siswa
+        $data['kelasList'] = $siswaModel->distinct()->select('kelas')->orderBy('kelas')->findAll();
+        $data['angkatanList'] = $siswaModel->distinct()->select('tahun_angkatan')->orderBy('tahun_angkatan', 'desc')->findAll();
+
         return view('nilai/index', $data);
     }
-    
 
     public function create()
     {
@@ -90,31 +92,44 @@ class Nilai extends Controller
     public function update($id)
     {
         $nilaiModel = new NilaiModel();
-    
+
         // Ambil data nilai lama
         $nilaiLama = $nilaiModel->find($id);
         if (!$nilaiLama) {
             return redirect()->to('/nilai')->with('error', 'Data nilai tidak ditemukan.');
         }
-    
+
         // Ambil input baru dari form
         $nilaiBaru = $this->request->getPost('nilai');
-    
+
         $data = [
             'id_siswa' => $nilaiLama['id_siswa'], // Tetap menggunakan id_siswa yang lama
             'id_kriteria' => $nilaiLama['id_kriteria'], // Tetap menggunakan id_kriteria yang lama
             'nilai' => $nilaiBaru
         ];
-    
+
         $nilaiModel->update($id, $data);
         return redirect()->to('/nilai')->with('success', 'Nilai berhasil diperbarui.');
     }
-    
+
 
     public function delete($id)
     {
         $nilaiModel = new NilaiModel();
         $nilaiModel->delete($id);
         return redirect()->to('/nilai')->with('success', 'Nilai berhasil dihapus.');
+    }
+
+    public function search()
+    {
+        $keyword = $this->request->getGet('keyword');
+        $kriteria = $this->request->getGet('kriteria');
+        $kelas = $this->request->getGet('kelas');
+        $angkatan = $this->request->getGet('angkatan');
+
+        $model = new \App\Models\NilaiModel();
+
+        $data = $model->getFilteredData($kriteria, $kelas, $angkatan, $keyword);
+        return $this->response->setJSON($data);
     }
 }

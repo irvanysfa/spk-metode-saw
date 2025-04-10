@@ -35,6 +35,8 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('/nilai/edit/(:num)', 'Nilai::edit/$1');
     $routes->post('/nilai/update/(:num)', 'Nilai::update/$1');
     $routes->get('/nilai/delete/(:num)', 'Nilai::delete/$1');
+    $routes->get('/nilai/search', 'Nilai::search');
+
 
     $routes->get('/perhitungan', 'PerhitunganController::index');
 
