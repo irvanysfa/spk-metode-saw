@@ -13,7 +13,7 @@
 
 <body>
     <div class="container">
-        <img src="<?= base_url('asset/img/logo-tutwuri.jpg') ?>" alt="Deskripsi Gambar" class="logo">
+        <img src="<?= base_url('asset/img/smp1ambal.jpg') ?>" alt="Deskripsi Gambar" class="logo">
         <h2>Register Admin</h2>
 
         <?php if (session()->getFlashdata('success')): ?>

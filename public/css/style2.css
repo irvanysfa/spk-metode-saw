@@ -37,6 +37,20 @@ main {
     text-align: center;
     margin-right: 20px;
 }
+.nav-item-logout a {
+    border-radius: 50px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: center;
+    margin-right: 20px;
+}
+.nav-item-logout a:hover {
+    color:red; /* Warna teks saat hover */
+    cursor: pointer; /* Ubah kursor menjadi tangan */
+    transition: background-color 0.3s, color 0.3s; /* Animasi transisi */
+}
 
 .btn-logout {
     background-color: #0d6efd; /* Warna biru */
@@ -75,3 +89,8 @@ nav {
 .nav-pills .nav-link:hover {
     text-decoration: underline;
 }
+
+.custom-margin {
+    margin-top: 10px; /* margin semua sisi */
+}
+

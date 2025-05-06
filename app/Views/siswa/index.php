@@ -4,6 +4,10 @@
 <div class="container-utama">
     <h2>Data Siswa</h2>
     <a href="<?= base_url('/siswa/create') ?>" class="btn btn-primary">Tambah Siswa</a>
+    <a href="<?= base_url('upload-excel') ?>" class="btn btn-primary">
+        Upload Excel
+    </a>
+
     <form method="get" action="<?= base_url('/siswa') ?>" class="row row-cols-lg-auto g-3 align-items-center mt-3">
         <div class="col-12">
             <label for="kelas" class="form-label">Pilih Kelas:</label>
@@ -30,6 +34,11 @@
         </div>
     </form>
 
+    <?php if (session()->getFlashdata('success')): ?>
+        <div class="alert alert-success">
+            <?= session()->getFlashdata('success') ?>
+        </div>
+    <?php endif; ?>
 
     <table class="table mt-3">
         <thead>
@@ -38,7 +47,7 @@
                 <th>Kode Alternatif</th>
                 <th>Nama</th>
                 <th>Kelas</th>
-                <th>Tahun Angkatan</th>
+                <th>TA</th>
                 <th>Nilai</th>
                 <th>Aksi</th>
             </tr>
@@ -48,10 +57,10 @@
             foreach ($siswa as $s): ?>
                 <tr>
                     <td><?= $no++ ?></td>
-                    <td><?= $s['kode_alternatif'] ?></td>
+                    <td class="text-center"><?= $s['kode_alternatif'] ?></td>
                     <td><?= $s['nama_siswa'] ?></td>
-                    <td><?= $s['kelas'] ?></td>
-                    <td><?= $s['tahun_angkatan'] ?></td>
+                    <td class="text-center"><?= $s['kelas'] ?></td>
+                    <td class="text-center"><?= $s['tahun_angkatan'] ?></td>
                     <td>
                         <?php foreach ($kriteria as $k): ?>
                             <?php
@@ -63,13 +72,16 @@
                                 }
                             }
                             ?>
-                            <span class='badge bg-info'><?= $k['nama_kriteria'] ?>: <?= $nilai_kriteria ?></span><br>
+                            <span class="badge" style="background-color: transparent; color: black;">
+                                <?= $k['nama_kriteria'] ?>: <?= $nilai_kriteria ?>
+                            </span>
+                            <br>
                         <?php endforeach; ?>
                     </td>
-                    <td>
-                        <a href="<?= base_url('/siswa/edit/' . $s['id_siswa']) ?>" class="btn btn-warning btn-sm">Edit Siswa</a>
-                        <a href="<?= base_url('/siswa/edit-nilai/' . $s['id_siswa']) ?>" class="btn btn-success btn-sm">Edit Nilai</a>
-                        <a href="<?= base_url('/siswa/delete/' . $s['id_siswa']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
+                    <td class="text-center">
+                        <a href="<?= base_url('/siswa/edit/' . $s['id_siswa']) ?>" class="btn btn-warning btn-sm custom-margin">Edit Siswa</a>
+                        <a href="<?= base_url('/siswa/edit-nilai/' . $s['id_siswa']) ?>" class="btn btn-success btn-sm custom-margin">Edit Nilai</a>
+                        <a href="<?= base_url('/siswa/delete/' . $s['id_siswa']) ?>" class="btn btn-danger btn-sm custom-margin" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

@@ -18,7 +18,7 @@
     ?>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="container">
-            <img src="<?= base_url('asset/img/logo-tutwuri.jpg') ?>" alt="Logo Header" class="logo-header">
+            <img src="<?= base_url('asset/img/smp1ambal.jpg') ?>" alt="Logo Header" class="logo-header">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -42,7 +42,7 @@
                     <li class="nav-item">
                         <a class="nav-link <?= ($uri == 'hasil') ? 'active' : '' ?>" href="/hasil">Hasil</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item-logout">
                         <a class="nav-link" href="<?= base_url('/logout') ?>" onclick="return confirm('Yakin ingin logout?')">Logout</a>
                     </li>
 

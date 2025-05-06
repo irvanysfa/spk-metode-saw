@@ -27,7 +27,9 @@ class Kriteria extends Controller
             'kode_kriteria'  => $this->request->getPost('kode_kriteria'),
             'nama_kriteria'  => $this->request->getPost('nama_kriteria'),
             'bobot'          => $this->request->getPost('bobot'),
-            'sifat'          => $this->request->getPost('sifat')
+            'sifat'          => $this->request->getPost('sifat'),
+            'tipe_kriteria'  => $this->request->getPost('tipe_kriteria')
+
         ];
 
         $model->insert($data);
@@ -54,7 +56,8 @@ class Kriteria extends Controller
             'kode_kriteria'  => $this->request->getPost('kode_kriteria'),
             'nama_kriteria'  => $this->request->getPost('nama_kriteria'),
             'bobot'          => $this->request->getPost('bobot'),
-            'sifat'          => $this->request->getPost('sifat')
+            'sifat'          => $this->request->getPost('sifat'),
+            'tipe_kriteria'  => $this->request->getPost('tipe_kriteria')
         ];
 
         $model->update($id, $data);

@@ -10,15 +10,15 @@ class HasilController extends Controller
     public function index()
     {
         $hasilModel = new HasilModel();
-        $data['kelas_list'] = $hasilModel->getKelas();
+        $data['tahun_list'] = $hasilModel->getTahunAngkatan();
 
-        $kelasTerpilih = $this->request->getVar('kelas');
-        if ($kelasTerpilih) {
-            $data['hasil'] = $hasilModel->getHasilByKelas($kelasTerpilih);
-            $data['kelasTerpilih'] = $kelasTerpilih;
+        $tahunTerpilih = $this->request->getVar('tahun_angkatan');
+        if ($tahunTerpilih) {
+            $data['hasil'] = $hasilModel->getHasilByTahun($tahunTerpilih);
+            $data['tahunTerpilih'] = $tahunTerpilih;
         } else {
             $data['hasil'] = [];
-            $data['kelasTerpilih'] = null;
+            $data['tahunTerpilih'] = null;
         }
 
         return view('hasil/index', $data);
@@ -27,35 +27,33 @@ class HasilController extends Controller
     public function print_pdf()
     {
         helper('pdf');
-    
+
         $hasilModel = new HasilModel();
-        $kelasTerpilih = $this->request->getVar('kelas');
-    
-        if (!$kelasTerpilih) {
-            return redirect()->to('hasil')->with('error', 'Pilih kelas terlebih dahulu.');
+        $tahunAngkatanTerpilih = $this->request->getVar('tahun_angkatan');
+
+        if (!$tahunAngkatanTerpilih) {
+            return redirect()->to('hasil')->with('error', 'Pilih tahun angkatan terlebih dahulu.');
         }
-    
-        $data['hasil'] = $hasilModel->getHasilByKelas($kelasTerpilih);
-        $data['kelasTerpilih'] = $kelasTerpilih;
-    
+
+        $data['hasil'] = $hasilModel->getHasilByTahunAngkatan($tahunAngkatanTerpilih);
+        $data['tahunAngkatanTerpilih'] = $tahunAngkatanTerpilih;
+
         $html = view('hasil/pdf', $data);
-    
-        generate_pdf($html, 'hasil_perangkingan_' . $kelasTerpilih . '.pdf');
+
+        generate_pdf($html, 'hasil_perangkingan_' . $tahunAngkatanTerpilih . '.pdf');
     }
 
-    public function deleteByKelas()
+
+    public function deleteByTahun()
     {
         $hasilModel = new HasilModel();
-        $kelasTerpilih = $this->request->getPost('kelas');
-    
-        if ($kelasTerpilih) {
-            $hasilModel->where('kelas', $kelasTerpilih)->delete();
+        $tahunTerpilih = $this->request->getPost('tahun_angkatan');
+
+        if ($tahunTerpilih) {
+            $hasilModel->deleteHasilByTahun($tahunTerpilih);
             return redirect()->to('/hasil')->with('success', 'Data hasil perhitungan berhasil dihapus!');
         } else {
-            return redirect()->to('/hasil')->with('error', 'Pilih kelas terlebih dahulu untuk menghapus data.');
+            return redirect()->to('/hasil')->with('error', 'Pilih tahun angkatan terlebih dahulu untuk menghapus data.');
         }
     }
-    
-
-    
 }

@@ -27,6 +27,14 @@
             </select>
         </div>
 
+        <div class="mb-3">
+            <label for="tipe_kriteria" class="form-label">Tipe Kriteria</label>
+            <select class="form-control" id="tipe_kriteria" name="tipe_kriteria" required>
+                <option value="utama" <?= ($kriteria['tipe_kriteria'] == 'utama') ? 'selected' : '' ?>>Utama</option>
+                <option value="tambahan" <?= ($kriteria['tipe_kriteria'] == 'tambahan') ? 'selected' : '' ?>>Tambahan</option>
+            </select>
+        </div>
+
         <button type="submit" class="btn btn-primary">Simpan</button>
         <a href="/kriteria" class="btn btn-secondary">Batal</a>
     </form>

@@ -52,7 +52,7 @@
     </form>
 
     <!-- Live Search Siswa -->
-    <div class="mb-3">
+    <div class="mb-3 custom-margin">
         <label for="search-nama" class="form-label">Cari Siswa:</label>
         <input type="text" id="search-nama" class="form-control" placeholder="Ketik nama siswa...">
     </div>
@@ -75,13 +75,13 @@
             <?php $no = 1;
             foreach ($nilai as $n): ?>
                 <tr>
-                    <td><?= $no++ ?></td>
+                    <td class="text-center"><?= $no++ ?></td>
                     <td><?= $n['nama_siswa'] ?></td>
-                    <td><?= $n['kelas'] ?></td>
-                    <td><?= $n['tahun_angkatan'] ?></td>
-                    <td><?= $n['nama_kriteria'] ?></td>
-                    <td><?= $n['nilai'] ?></td>
-                    <td>
+                    <td class="text-center"><?= $n['kelas'] ?></td>
+                    <td class="text-center"><?= $n['tahun_angkatan'] ?></td>
+                    <td class="text-center"><?= $n['nama_kriteria'] ?></td>
+                    <td class="text-center"><?= $n['nilai'] ?></td>
+                    <td class="text-center">
                         <a href="<?= base_url('/nilai/edit/' . $n['id_nilai']) ?>" class="btn btn-warning">Edit</a>
                         <a href="<?= base_url('/nilai/delete/' . $n['id_nilai']) ?>" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
                     </td>

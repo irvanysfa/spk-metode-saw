@@ -41,6 +41,7 @@ class Autoload extends AutoloadConfig
      */
     public $psr4 = [
         APP_NAMESPACE => APPPATH,
+        'PhpOffice\\PhpSpreadsheet\\' => ROOTPATH . 'vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
     ];
 
     /**

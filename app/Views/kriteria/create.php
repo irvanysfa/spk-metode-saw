@@ -27,6 +27,14 @@
             </select>
         </div>
 
+        <div class="mb-3">
+            <label for="tipe_kriteria" class="form-label">Tipe Kriteria</label>
+            <select class="form-control" id="tipe_kriteria" name="tipe_kriteria" required>
+                <option value="utama">Utama</option>
+                <option value="tambahan">Tambahan</option>
+            </select>
+        </div>
+
         <button type="submit" class="btn btn-primary">Simpan</button>
     </form>
 

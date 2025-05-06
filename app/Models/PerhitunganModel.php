@@ -23,6 +23,11 @@ class PerhitunganModel extends Model
         return $this->db->table('kriteria')->get()->getResultArray();
     }
 
+    public function getKriteriaByTipe($tipe)
+    {
+        return $this->db->table('kriteria')->where('tipe_kriteria', $tipe)->get()->getResultArray();
+    }
+
     public function getNilaiWithSiswaKriteria($kelas)
     {
         return $this->db->table('nilai')
@@ -31,6 +36,63 @@ class PerhitunganModel extends Model
             ->where('siswa.kelas', $kelas)
             ->select('nilai.*, siswa.nama_siswa, siswa.kelas, kriteria.sifat, kriteria.bobot')
             ->get()->getResultArray();
+    }
+    public function getKelasByIdSiswa($id_siswa)
+    {
+        return $this->db->table('siswa')
+            ->where('id_siswa', $id_siswa)
+            ->get()
+            ->getRow('kelas');
+    }
+
+    public function getTahunAngkatan()
+    {
+        return $this->db->table('siswa')->distinct()->select('tahun_angkatan')->get()->getResultArray();
+    }
+
+    public function getSiswaByAngkatan($angkatan)
+    {
+        return $this->db->table('siswa')->where('tahun_angkatan', $angkatan)->get()->getResultArray();
+    }
+
+    public function getNilaiWithSiswaKriteriaByAngkatan($angkatan)
+    {
+        return $this->db->table('nilai')
+            ->join('siswa', 'siswa.id_siswa = nilai.id_siswa')
+            ->join('kriteria', 'kriteria.id_kriteria = nilai.id_kriteria')
+            ->where('siswa.tahun_angkatan', $angkatan)
+            ->select('nilai.*, siswa.nama_siswa, siswa.tahun_angkatan, kriteria.sifat, kriteria.bobot')
+            ->get()->getResultArray();
+    }
+    public function getHasilByAngkatan($angkatan)
+    {
+        return $this->db->table('hasil')
+            ->where('tahun_angkatan', $angkatan)
+            ->get()
+            ->getResultArray();
+    }
+
+    public function getMaxMinNilaiByAngkatan($angkatan)
+    {
+        $query = $this->db->query("
+        SELECT kriteria.id_kriteria, 
+               MAX(nilai.nilai) AS max, 
+               MIN(nilai.nilai) AS min 
+        FROM nilai
+        JOIN siswa ON siswa.id_siswa = nilai.id_siswa
+        JOIN kriteria ON kriteria.id_kriteria = nilai.id_kriteria
+        WHERE siswa.tahun_angkatan = ?
+        GROUP BY kriteria.id_kriteria
+    ", [$angkatan]);
+
+        $maxMinNilai = [];
+        foreach ($query->getResultArray() as $row) {
+            $maxMinNilai[$row['id_kriteria']] = [
+                'max' => $row['max'],
+                'min' => $row['min']
+            ];
+        }
+        return $maxMinNilai;
     }
 
     public function getMaxMinNilai($kelas)
@@ -56,76 +118,164 @@ class PerhitunganModel extends Model
         return $maxMinNilai;
     }
 
-    public function hitungNormalisasi($nilai, $kelas)
+    public function hitungNormalisasi($nilai, $angkatan)
     {
-        $maxMinNilai = $this->getMaxMinNilai($kelas);
+        $maxMinNilai = $this->getMaxMinNilaiByAngkatan($angkatan);
         $normalisasi = [];
+
+        // Cek apakah ada nilai 0 untuk setiap kriteria (sekali saja di awal)
+        $cekNolPerKriteria = [];
+        foreach ($nilai as $n) {
+            $id_kriteria = $n['id_kriteria'];
+            if (!isset($cekNolPerKriteria[$id_kriteria])) {
+                $cekNolPerKriteria[$id_kriteria] = false;
+            }
+            if ($n['nilai'] == 0) {
+                $cekNolPerKriteria[$id_kriteria] = true;
+            }
+        }
 
         foreach ($nilai as $n) {
             $id_siswa = $n['id_siswa'];
             $id_kriteria = $n['id_kriteria'];
             $nilai_siswa = $n['nilai'];
-            $sifat = $n['sifat'];
 
+            if ($nilai_siswa === null || $nilai_siswa === '') {
+                continue;
+            }
+
+            $sifat = $n['sifat'];
             $max = $maxMinNilai[$id_kriteria]['max'] ?? 1;
             $min = $maxMinNilai[$id_kriteria]['min'] ?? 1;
 
             if ($sifat == 'benefit') {
-                $normalisasi[$id_siswa][$id_kriteria] = ($max > 0) ? round($nilai_siswa / $max, 4) : 0;
-            } else {
-                $normalisasi[$id_siswa][$id_kriteria] = ($nilai_siswa > 0) ? round($min / $nilai_siswa, 4) : 0;
+                if ($max <= 0) {
+                    $normalisasi[$id_siswa][$id_kriteria] = 0;
+                } else {
+                    $normalisasi[$id_siswa][$id_kriteria] = round($nilai_siswa / $max, 6);
+                }
+            } else { // cost
+                // Jika ada nilai 0 di kriteria ini, gunakan 0.01 sebagai min
+                $min = $cekNolPerKriteria[$id_kriteria] ? 0.01 : max($min, 0.01);
+                $nilai_siswa = ($nilai_siswa == 0) ? 0.01 : $nilai_siswa;
+
+                $normalisasi[$id_siswa][$id_kriteria] = round($min / $nilai_siswa, 6);
             }
         }
 
         return $normalisasi;
     }
 
+
+
     public function getBobotNormalisasi()
     {
         $kriteria = $this->getKriteria();
-        $totalBobot = array_sum(array_column($kriteria, 'bobot'));
+
+        // Pisahkan kriteria utama dan tambahan
+        $utama = array_filter($kriteria, fn($k) => $k['tipe_kriteria'] == 'utama');
+        $tambahan = array_filter($kriteria, fn($k) => $k['tipe_kriteria'] == 'tambahan');
+
+        $totalBobotUtama = array_sum(array_column($utama, 'bobot'));
+        $totalBobotTambahan = array_sum(array_column($tambahan, 'bobot'));
 
         foreach ($kriteria as &$k) {
-            $k['bobot_normalisasi'] = $totalBobot > 0 ? round($k['bobot'] / $totalBobot, 4) : 0;
+            if ($k['tipe_kriteria'] == 'utama') {
+                $k['bobot_normalisasi'] = $totalBobotUtama > 0 ? round($k['bobot'] / $totalBobotUtama, 4) : 0;
+            } else {
+                $k['bobot_normalisasi'] = $totalBobotTambahan > 0 ? round($k['bobot'] / $totalBobotTambahan, 4) : 0;
+            }
+        }
+        return $kriteria;
+    }
+    public function getPerkalianNormalisasi($normalisasi)
+    {
+        $kriteria = $this->getBobotNormalisasi();
+
+        // Siapkan array bobot per id_kriteria
+        $bobotPerKriteria = [];
+        foreach ($kriteria as $k) {
+            $bobotPerKriteria[$k['id_kriteria']] = $k['bobot_normalisasi'];
         }
 
-        return $kriteria;
+        $hasil = [];
+
+        foreach ($normalisasi as $id_siswa => $nilai_kriteria) {
+            foreach ($nilai_kriteria as $id_kriteria => $nilai_normalisasi) {
+                $bobot = $bobotPerKriteria[$id_kriteria] ?? 0;
+                $hasil[$id_siswa][$id_kriteria] = round($nilai_normalisasi * $bobot, 6);
+            }
+        }
+
+        return $hasil;
     }
 
     public function hitungTotalNilai($normalisasi)
     {
-        $bobotKriteria = $this->getBobotNormalisasi();
-        $bobot = array_column($bobotKriteria, 'bobot_normalisasi', 'id_kriteria');
+        $kriteria = $this->getBobotNormalisasi(); // GANTI ini
+
+        $bobotUtama = [];
+        $bobotTambahan = [];
+
+        foreach ($kriteria as $k) {
+            if ($k['tipe_kriteria'] == 'utama') {
+                $bobotUtama[$k['id_kriteria']] = $k['bobot_normalisasi'];
+            } else {
+                $bobotTambahan[$k['id_kriteria']] = $k['bobot_normalisasi'];
+            }
+        }
+
         $totalNilai = [];
 
         foreach ($normalisasi as $id_siswa => $nilai_kriteria) {
-            $total = 0;
+            $totalUtama = 0;
+            $totalTambahan = 0;
+
             foreach ($nilai_kriteria as $id_kriteria => $nilai) {
-                $total += $nilai * ($bobot[$id_kriteria] ?? 0);
+                if (isset($bobotUtama[$id_kriteria])) {
+                    $totalUtama += $nilai * $bobotUtama[$id_kriteria];
+                } elseif (isset($bobotTambahan[$id_kriteria])) {
+                    $totalTambahan += $nilai * $bobotTambahan[$id_kriteria];
+                }
             }
-            $totalNilai[$id_siswa] = round($total, 4);
+
+            $total = round($totalUtama + $totalTambahan, 4);
+
+            $totalNilai[$id_siswa] = [
+                'total' => $total,
+                'utama' => round($totalUtama, 4),
+                'tambahan' => round($totalTambahan, 4)
+            ];
         }
 
         return $totalNilai;
     }
 
-    public function simpanHasil($hasil, $kelas)
-    {
-        $this->db->table('hasil')->where('kelas', $kelas)->delete();
-        $data = [];
 
-        foreach ($hasil as $id_siswa => $total_nilai) {
+    public function simpanHasil($hasil, $angkatan)
+    {
+        $this->db->table('hasil')->where('tahun_angkatan', $angkatan)->delete();
+
+        $data = [];
+        foreach ($hasil as $id_siswa => $nilai) {
+            // Ambil kelas dari tabel siswa jika belum ada
+            $kelas = $nilai['kelas'] ?? $this->getKelasByIdSiswa($id_siswa);
+
             $data[] = [
                 'id_siswa' => $id_siswa,
-                'total_nilai' => $total_nilai,
+                'total_nilai' => $nilai['total'],
+                'nilai_utama' => $nilai['utama'],
+                'nilai_tambahan' => $nilai['tambahan'],
+                'tahun_angkatan' => $angkatan,
                 'kelas' => $kelas
             ];
         }
 
+        // Ranking berdasarkan total
         usort($data, fn($a, $b) => $b['total_nilai'] <=> $a['total_nilai']);
 
-        foreach ($data as $ranking => &$row) {
-            $row['ranking'] = $ranking + 1;
+        foreach ($data as $index => $row) {
+            $data[$index]['ranking'] = $index + 1;
         }
 
         if (!empty($data)) {

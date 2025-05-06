@@ -13,6 +13,7 @@
                 <th>Nama Kriteria</th>
                 <th>Bobot</th>
                 <th>Sifat</th>
+                <th>Tipe</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -21,11 +22,12 @@
             foreach ($kriteria as $k): ?>
                 <tr>
                     <td><?= $no++ ?></td>
-                    <td><?= esc($k['kode_kriteria']) ?></td>
+                    <td class="text-center"><?= esc($k['kode_kriteria']) ?></td>
                     <td><?= esc($k['nama_kriteria']) ?></td>
-                    <td><?= esc($k['bobot']) ?></td>
-                    <td><?= esc($k['sifat']) ?></td>
-                    <td>
+                    <td class="text-center"><?= esc($k['bobot']) ?></td>
+                    <td class="text-center"><?= esc($k['sifat']) ?></td>
+                    <td class="text-center"><?= esc($k['tipe_kriteria']) ?></td>
+                    <td class="text-center">
                         <a href="<?= base_url('/kriteria/edit/' . $k['id_kriteria']) ?>" class="btn btn-warning">Edit</a>
                         <a href="<?= base_url('/kriteria/delete/' . $k['id_kriteria']) ?>" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
                     </td>

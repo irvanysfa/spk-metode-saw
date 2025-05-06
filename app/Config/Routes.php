@@ -42,8 +42,10 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 
     $routes->get('/hasil', 'HasilController::index');
     $routes->get('/hasil/print_pdf', 'HasilController::print_pdf');
-    $routes->post('hasil/deleteByKelas', 'HasilController::deleteByKelas');
+    $routes->post('hasil/deleteByTahun', 'HasilController::deleteByTahun');
 
+    $routes->get('upload-excel', 'UploadExcel::index'); // untuk menampilkan form upload
+    $routes->post('import/excel', 'UploadExcel::import');
 });
 
 $routes->get('/logout', 'Auth::logout');

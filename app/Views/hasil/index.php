@@ -5,47 +5,53 @@
     <h2>Hasil Perankingan</h2>
 
     <form method="get" action="<?= base_url('hasil') ?>">
-        <label for="kelas">Pilih Kelas:</label>
-        <select name="kelas" id="kelas" class="form-control" onchange="this.form.submit()">
-            <option value="">-- Pilih Kelas --</option>
-            <?php foreach ($kelas_list as $k) : ?>
-                <option value="<?= $k['kelas']; ?>" <?= ($kelasTerpilih == $k['kelas']) ? 'selected' : ''; ?>>
-                    <?= $k['kelas']; ?>
+        <label for="tahun_angkatan">Pilih Tahun Angkatan:</label>
+        <select name="tahun_angkatan" id="tahun_angkatan" class="form-control" onchange="this.form.submit()">
+            <option value="">-- Pilih Tahun Angkatan --</option>
+            <?php foreach ($tahun_list as $t) : ?>
+                <option value="<?= $t['tahun_angkatan']; ?>" <?= ($tahunTerpilih == $t['tahun_angkatan']) ? 'selected' : ''; ?>>
+                    <?= $t['tahun_angkatan']; ?>
                 </option>
             <?php endforeach; ?>
         </select>
     </form>
 
-    <?php if (!empty($kelasTerpilih)) : ?>
-        <h4>Hasil Perankingan Kelas: <?= $kelasTerpilih; ?></h4>
+    <?php if (!empty($tahunTerpilih)) : ?>
+        <h4>Hasil Perankingan Tahun Angkatan: <?= $tahunTerpilih; ?></h4>
 
         <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>Ranking</th>
                     <th>Nama Siswa</th>
+                    <th>Kelas</th>
+                    <th>Nilai Utama</th>
+                    <th>Nilai Tambahan</th>
                     <th>Total Nilai</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($hasil as $h) : ?>
                     <tr>
-                        <td><?= $h['ranking']; ?></td>
+                        <td class="text-center"><?= $h['ranking']; ?></td>
                         <td><?= $h['nama_siswa']; ?></td>
-                        <td><?= $h['total_nilai']; ?></td>
+                        <td class="text-center"><?= $h['kelas']; ?></td>
+                        <td class="text-center"><?= $h['nilai_utama']; ?></td>
+                        <td class="text-center"><?= $h['nilai_tambahan']; ?></td>
+                        <td class="text-center"><?= $h['total_nilai']; ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
 
         <!-- Tombol Hapus Data -->
-        <form id="deleteForm" method="post" action="<?= base_url('hasil/deleteByKelas'); ?>">
-            <input type="hidden" name="kelas" value="<?= $kelasTerpilih; ?>">
+        <form id="deleteForm" method="post" action="<?= base_url('hasil/deleteByTahun'); ?>">
+            <input type="hidden" name="tahun_angkatan" value="<?= $tahunTerpilih; ?>">
             <button type="button" class="btn btn-danger mt-2" onclick="confirmDelete()">Hapus Data</button>
         </form>
 
         <!-- Tombol Cetak PDF -->
-        <a href="<?= base_url('hasil/print_pdf?kelas=' . $kelasTerpilih); ?>" target="_blank">
+        <a href="<?= base_url('hasil/print_pdf?tahun_angkatan=' . $tahunTerpilih); ?>" target="_blank">
             <button class="btn btn-success mt-2">Cetak PDF</button>
         </a>
     <?php endif; ?>
@@ -57,7 +63,7 @@
     function confirmDelete() {
         Swal.fire({
             title: "Apakah Anda yakin?",
-            text: "Data hasil perhitungan untuk kelas ini akan dihapus!",
+            text: "Data hasil perhitungan untuk tahun ini akan dihapus!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#d33",
@@ -70,7 +76,6 @@
         });
     }
 
-    // Tampilkan notifikasi sukses atau error
     <?php if (session()->getFlashdata('success')) : ?>
         Swal.fire("Berhasil!", "<?= session()->getFlashdata('success'); ?>", "success");
     <?php elseif (session()->getFlashdata('error')) : ?>

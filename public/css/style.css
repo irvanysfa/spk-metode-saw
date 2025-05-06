@@ -57,3 +57,69 @@ footer {
     margin:15px;
 }
 
+h2 {
+    font-family: "Poppins", serif;
+    font-weight: 700;
+    font-style: normal;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+.hero-section {
+    margin-top: 0;
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    overflow: hidden; /* penting untuk overlay */
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* ini menggelapkan gambar */
+    z-index: 1;
+  }
+  
+  .hero-caption {
+    position: relative;
+    z-index: 2; /* supaya di atas overlay */
+    padding: 20px 40px;
+    border-radius: 10px;
+    max-width: 80%;
+  }
+  
+  .table {
+    border-collapse: collapse;
+    margin-top: 30px;
+  }
+  
+  .table th {
+    border: 1px solid #dee2e6;
+    text-align: center;       /* Rata tengah hanya untuk header */
+    vertical-align: middle;
+    padding: 8px 12px;
+  }
+  
+  .table td {
+    border: 1px solid #dee2e6;
+    text-align: left;         /* Rata kiri untuk isi */
+    vertical-align: middle;
+    padding: 8px 12px;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+  
+  
+    

@@ -54,21 +54,41 @@ class SiswaController extends Controller
 
     public function create()
     {
-        return view('siswa/create');
+        $kriteriaModel = new \App\Models\KriteriaModel();
+        $data['kriteria'] = $kriteriaModel->findAll();
+
+        return view('siswa/create', $data);
     }
+
 
     public function store()
     {
-        $model = new SiswaModel();
+        $siswaModel = new SiswaModel();
+        $nilaiModel = new \App\Models\NilaiModel();
+
+        // Simpan siswa
         $data = [
             'kode_alternatif' => $this->request->getPost('kode_alternatif'),
-            'nama_siswa'  => $this->request->getPost('nama_siswa'),
-            'kelas'       => $this->request->getPost('kelas'),
+            'nama_siswa'      => $this->request->getPost('nama_siswa'),
+            'kelas'           => $this->request->getPost('kelas'),
             'tahun_angkatan'  => $this->request->getPost('tahun_angkatan')
         ];
-        $model->insert($data);
-        return redirect()->to('/siswa')->with('success', 'Data siswa berhasil ditambahkan!');
+        $siswaModel->insert($data);
+        $id_siswa = $siswaModel->getInsertID();
+
+        // Simpan nilai kriteria
+        $nilaiData = $this->request->getPost('nilai');
+        foreach ($nilaiData as $id_kriteria => $nilai) {
+            $nilaiModel->insert([
+                'id_siswa' => $id_siswa,
+                'id_kriteria' => $id_kriteria,
+                'nilai' => $nilai
+            ]);
+        }
+
+        return redirect()->to('/siswa')->with('success', 'Siswa dan nilai berhasil ditambahkan!');
     }
+
 
 
     public function edit($id)

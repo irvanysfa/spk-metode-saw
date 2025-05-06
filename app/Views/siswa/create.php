@@ -28,6 +28,13 @@
         <label for="tahun_angkatan">Tahun Angkatan</label>
         <input type="number" name="tahun_angkatan" id="tahun_angkatan" class="form-control" required placeholder="Contoh: 2023">
     </div>
+    <?php foreach ($kriteria as $k): ?>
+        <div class="form-group">
+            <label for="nilai_<?= $k['id_kriteria'] ?>"><?= $k['nama_kriteria'] ?></label>
+            <input type="number" step="0.01" min="0" max="100" class="form-control"
+                name="nilai[<?= $k['id_kriteria'] ?>]" id="nilai_<?= $k['id_kriteria'] ?>" required>
+        </div>
+    <?php endforeach; ?>
 
     <button type="submit" class="btn btn-success mt-2">Simpan</button>
     <a href="<?= base_url('/siswa') ?>" class="btn btn-secondary mt-2">Kembali</a>
