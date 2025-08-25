@@ -4,9 +4,29 @@
 <div class="container-utama">
     <h2>Data Siswa</h2>
     <a href="<?= base_url('/siswa/create') ?>" class="btn btn-primary">Tambah Siswa</a>
-    <a href="<?= base_url('upload-excel') ?>" class="btn btn-primary">
-        Upload Excel
-    </a>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+    Upload Excel
+</button>
+<!-- Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="uploadModalLabel">Upload File Excel</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="<?= base_url('import/excel') ?>" method="post" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="formFile" class="form-label">Pilih file Excel</label>
+            <input class="form-control" type="file" name="fileexcel" id="formFile" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
     <form method="get" action="<?= base_url('/siswa') ?>" class="row row-cols-lg-auto g-3 align-items-center mt-3">
         <div class="col-12">
@@ -113,5 +133,5 @@
         });
     <?php endif; ?>
 </script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <?= $this->endSection() ?>

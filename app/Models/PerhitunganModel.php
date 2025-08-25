@@ -76,41 +76,20 @@ class PerhitunganModel extends Model
     {
         $query = $this->db->query("
         SELECT kriteria.id_kriteria, 
+               kriteria.kode_kriteria, 
                MAX(nilai.nilai) AS max, 
                MIN(nilai.nilai) AS min 
         FROM nilai
         JOIN siswa ON siswa.id_siswa = nilai.id_siswa
         JOIN kriteria ON kriteria.id_kriteria = nilai.id_kriteria
         WHERE siswa.tahun_angkatan = ?
-        GROUP BY kriteria.id_kriteria
+        GROUP BY kriteria.id_kriteria, kriteria.kode_kriteria
     ", [$angkatan]);
 
         $maxMinNilai = [];
         foreach ($query->getResultArray() as $row) {
             $maxMinNilai[$row['id_kriteria']] = [
-                'max' => $row['max'],
-                'min' => $row['min']
-            ];
-        }
-        return $maxMinNilai;
-    }
-
-    public function getMaxMinNilai($kelas)
-    {
-        $query = $this->db->query("
-            SELECT kriteria.id_kriteria, 
-                   MAX(nilai.nilai) AS max, 
-                   MIN(nilai.nilai) AS min 
-            FROM nilai
-            JOIN siswa ON siswa.id_siswa = nilai.id_siswa
-            JOIN kriteria ON kriteria.id_kriteria = nilai.id_kriteria
-            WHERE siswa.kelas = ?
-            GROUP BY kriteria.id_kriteria
-        ", [$kelas]);
-
-        $maxMinNilai = [];
-        foreach ($query->getResultArray() as $row) {
-            $maxMinNilai[$row['id_kriteria']] = [
+                'kode_kriteria' => $row['kode_kriteria'],
                 'max' => $row['max'],
                 'min' => $row['min']
             ];
@@ -212,7 +191,7 @@ class PerhitunganModel extends Model
 
     public function hitungTotalNilai($normalisasi)
     {
-        $kriteria = $this->getBobotNormalisasi(); // GANTI ini
+        $kriteria = $this->getBobotNormalisasi();
 
         $bobotUtama = [];
         $bobotTambahan = [];

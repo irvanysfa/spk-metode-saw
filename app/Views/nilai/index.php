@@ -51,14 +51,6 @@
         </div>
     </form>
 
-    <!-- Live Search Siswa -->
-    <div class="mb-3 custom-margin">
-        <label for="search-nama" class="form-label">Cari Siswa:</label>
-        <input type="text" id="search-nama" class="form-control" placeholder="Ketik nama siswa...">
-    </div>
-
-
-
     <table class="table mt-3">
         <thead>
             <tr>
